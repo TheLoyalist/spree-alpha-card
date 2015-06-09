@@ -28,6 +28,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'sass-rails', '~> 4.0.2'
   spec.add_development_dependency 'sqlite3'
   spec.add_development_dependency 'byebug'
+  spec.add_development_dependency 'vcr'
+  spec.add_development_dependency 'webmock'
 
   spec.add_runtime_dependency 'alpha_card', '~> 0.2.5'
   spec.add_runtime_dependency 'spree_core', '>= 3.0.0'
