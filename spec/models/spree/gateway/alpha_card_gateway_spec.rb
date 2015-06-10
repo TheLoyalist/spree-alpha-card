@@ -60,13 +60,16 @@ RSpec.describe Spree::Gateway::AlphaCardGateway do
 
     context '#purchase' do
 
-      it 'purchases successfully' do
-        opts = {
+      let(:opts) do
+        {
           email: "l@larskluge.com",
           order_id: "12345678",
           ipaddress: "::1",
           currency: "USD",
         }
+      end
+
+      it 'purchases successfully' do
         response = VCR.use_cassette("simple purchase") do
           provider.purchase 256_67, cc, opts
         end
@@ -75,6 +78,17 @@ RSpec.describe Spree::Gateway::AlphaCardGateway do
         expect(response).to be_success
         expect(response.params).to include("type" => "sale")
         expect(response.authorization).to eq("123456")
+      end
+
+      it 'declines a low amount' do
+        response = VCR.use_cassette("purchase: low amount") do
+          provider.purchase 99, cc, opts
+        end
+
+        expect(response).to be_an_instance_of(::ActiveMerchant::Billing::Response)
+        expect(response).to_not be_success
+        expect(response.authorization).to be_nil
+        expect(response.message).to match(/declined/i)
       end
 
     end
