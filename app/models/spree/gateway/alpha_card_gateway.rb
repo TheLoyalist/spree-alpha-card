@@ -35,8 +35,11 @@ module Spree
     end
 
     def actions
-      # %w(credit)
-      []
+      %w(purchase credit)
+    end
+
+    def void(*args)
+      ActiveMerchant::Billing::Response.new false, "AlphaCardGateway#void not implemented, please use refund", {}, {}
     end
 
 

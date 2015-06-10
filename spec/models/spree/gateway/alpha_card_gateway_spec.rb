@@ -129,6 +129,17 @@ RSpec.describe Spree::Gateway::AlphaCardGateway do
 
     end
 
+    context '#credit' do
+
+      it 'fails to void since implementation is missing' do
+        response = provider.void
+        expect(response).to be_an_instance_of(::ActiveMerchant::Billing::Response)
+        expect(response).to_not be_success
+        expect(response.message).to match(/not implemented/i)
+      end
+
+    end
+
   end
 
 end
