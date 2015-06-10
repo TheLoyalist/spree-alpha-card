@@ -1,0 +1,38 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://secure.alphacardgateway.com/api/transact.php
+    body:
+      encoding: US-ASCII
+      string: type=sale&email=l%40larskluge.com&orderid=12345678&ipaddress=&amount=256.67&currency=USD&ccnumber=4111111111111111&ccexp=0715&username=demo&password=password
+    headers:
+      Accept:
+      - "*/*; q=0.5, application/xml"
+      Accept-Encoding:
+      - gzip, deflate
+      Content-Length:
+      - '157'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 10 Jun 2015 13:54:43 GMT
+      Server:
+      - Apache
+      Content-Length:
+      - '143'
+      Content-Type:
+      - text/html; charset=UTF-8
+    body:
+      encoding: UTF-8
+      string: response=1&responsetext=SUCCESS&authcode=123456&transactionid=2708218696&avsresponse=&cvvresponse=&orderid=12345678&type=sale&response_code=100
+    http_version: 
+  recorded_at: Wed, 10 Jun 2015 13:54:44 GMT
+recorded_with: VCR 2.9.3

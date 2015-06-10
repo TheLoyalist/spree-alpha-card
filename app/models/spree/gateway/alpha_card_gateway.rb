@@ -90,7 +90,6 @@ module Spree
 
 
 
-
     protected
 
     def spree_money_to_alpha_card cents
