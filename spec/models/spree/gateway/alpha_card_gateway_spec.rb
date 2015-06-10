@@ -78,6 +78,7 @@ RSpec.describe Spree::Gateway::AlphaCardGateway do
         expect(response).to be_success
         expect(response.params).to include("type" => "sale")
         expect(response.authorization).to eq("123456")
+        expect(response.error_code).to be_nil
       end
 
       it 'declines a low amount' do
@@ -89,6 +90,22 @@ RSpec.describe Spree::Gateway::AlphaCardGateway do
         expect(response).to_not be_success
         expect(response.authorization).to be_nil
         expect(response.message).to match(/declined/i)
+        expect(response.error_code).to eq("200")
+      end
+
+      it 'tests a fatal error; cc number invalid' do
+        allow(cc).to receive(:number).and_return("1234"*4)
+
+
+        response = VCR.use_cassette("purchase: invalid cc number") do
+          provider.purchase 10_00, cc, opts
+        end
+
+        expect(response).to be_an_instance_of(::ActiveMerchant::Billing::Response)
+        expect(response).to_not be_success
+        expect(response.authorization).to be_nil
+        expect(response.message).to match(/invalid credit card number/i)
+        expect(response.error_code).to eq("300")
       end
 
     end
@@ -107,6 +124,7 @@ RSpec.describe Spree::Gateway::AlphaCardGateway do
         expect(response).to be_an_instance_of(::ActiveMerchant::Billing::Response)
         expect(response).to_not be_success
         expect(response.message).to match(/transaction not found/i)
+        expect(response.error_code).to eq("300")
       end
 
     end

@@ -97,22 +97,22 @@ module Spree
     def request opts, originator
       begin
         res = provider.request opts, account
-        ActiveMerchant::Billing::Response.new res.success?, "AlphaCardGateway##{originator}: #{res.text}", res.data, response_params(res)
+        ActiveMerchant::Billing::Response.new res.success?, "AlphaCardGateway##{originator}: #{res.text}", res.data, response_params(res.data)
       rescue ::AlphaCard::AlphaCardError => e
-        ActiveMerchant::Billing::Response.new false, "AlphaCardGateway##{originator}: #{e.message}", e.response.data
+        ActiveMerchant::Billing::Response.new false, "AlphaCardGateway##{originator}: #{e.message}", e.response.data, response_params(e.response.data)
       end
     end
 
-    def response_params result
+    def response_params data
       options = {
         test: test?,
-        authorization: result.data['authcode'],
-        avs_result: result.data['avsresponse'].presence,
-        cvv_result: result.data['cvvresponse'].presence,
+        authorization: data['authcode'].presence,
+        avs_result: data['avsresponse'].presence,
+        cvv_result: data['cvvresponse'].presence,
       }
 
-      unless result.success?
-        options[:error_code] = result.data['response_code']
+      unless data['response_code'] == '100'
+        options[:error_code] = data['response_code']
       end
 
       options

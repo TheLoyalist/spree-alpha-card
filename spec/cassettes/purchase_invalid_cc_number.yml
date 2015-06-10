@@ -1,0 +1,38 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://secure.alphacardgateway.com/api/transact.php
+    body:
+      encoding: US-ASCII
+      string: type=sale&email=l%40larskluge.com&orderid=12345678&ipaddress=&amount=10.00&currency=USD&ccnumber=1234123412341234&ccexp=0715&username=demo&password=password
+    headers:
+      Accept:
+      - "*/*; q=0.5, application/xml"
+      Accept-Encoding:
+      - gzip, deflate
+      Content-Length:
+      - '156'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 10 Jun 2015 16:01:55 GMT
+      Server:
+      - Apache
+      Content-Length:
+      - '163'
+      Content-Type:
+      - text/html; charset=UTF-8
+    body:
+      encoding: UTF-8
+      string: response=3&responsetext=Invalid Credit Card Number REFID:3157462326&authcode=&transactionid=&avsresponse=&cvvresponse=&orderid=12345678&type=sale&response_code=300
+    http_version: 
+  recorded_at: Wed, 10 Jun 2015 16:01:56 GMT
+recorded_with: VCR 2.9.3
