@@ -33,6 +33,7 @@ RSpec.describe Spree::Gateway::AlphaCardGateway do
 
   end
 
+
   context '#add_credit_card!' do
 
     it 'sets the date correctly' do
@@ -49,25 +50,51 @@ RSpec.describe Spree::Gateway::AlphaCardGateway do
 
   end
 
-  context '#purchase' do
 
-    it 'purchases successfully' do
+  context 'api calls' do
+
+    before :each do
       provider.set_preference :login, "demo"
       provider.set_preference :password, "password"
+    end
 
-      opts = {
-        email: "l@larskluge.com",
-        order_id: "12345678",
-        ipaddress: "::1",
-        currency: "USD",
-      }
-      response = VCR.use_cassette("simple purchase") do
-        provider.purchase 256_67, cc, opts
+    context '#purchase' do
+
+      it 'purchases successfully' do
+        opts = {
+          email: "l@larskluge.com",
+          order_id: "12345678",
+          ipaddress: "::1",
+          currency: "USD",
+        }
+        response = VCR.use_cassette("simple purchase") do
+          provider.purchase 256_67, cc, opts
+        end
+
+        expect(response).to be_an_instance_of(::ActiveMerchant::Billing::Response)
+        expect(response).to be_success
+        expect(response.params).to include("type" => "sale")
+        expect(response.authorization).to eq("123456")
       end
 
-      expect(response).to be_an_instance_of(::ActiveMerchant::Billing::Response)
-      expect(response).to be_success
-      expect(response.params).to include("type" => "sale")
+    end
+
+    context '#credit' do
+
+      it 'credits fails b/c alpha card test endpoint does not provide a valid transaction id for testing' do
+        payment = double("Spree::Payment", currency: "USD")
+        refund = double("Spree::Refund", payment: payment)
+        opts = {originator: refund}
+
+        response = VCR.use_cassette('credit without valid transaction id') do
+          provider.credit 67_99, "123456", opts
+        end
+
+        expect(response).to be_an_instance_of(::ActiveMerchant::Billing::Response)
+        expect(response).to_not be_success
+        expect(response.message).to match(/transaction not found/i)
+      end
+
     end
 
   end

@@ -41,12 +41,7 @@ module Spree
 
 
 
-
-
     def purchase money, credit_card, options = {}
-      logger.debug "-"*1024
-      logger.debug "AlphaCardGateway#purchase..."
-
       opts = {
         type: 'sale',
         email: options[:email],
@@ -56,36 +51,17 @@ module Spree
       add_money! opts, money, options
       add_credit_card! opts, credit_card
 
-      res = ::AlphaCard.request opts, account
-
-      logger.debug res.inspect
-      logger.debug "-"*1024
-
-      ActiveMerchant::Billing::Response.new res.success?, "AlphaCardGateway#purchase: #{res.text}", res.data, response_params(res)
+      request opts, 'purchase'
     end
 
 
 
-    # TODO implement #credit to support credit & refund in admin area
-    #
-    # problem: cc number is not stored, therefore payment profiles at gateway is probably required & needs to be implemented
-    #
-    #
-    # STATUS current implementation does not work!
-    #
     def credit money, reference, options = {}
-      logger.debug "-"*1024
-      logger.debug "AlphaCardGateway#credit..."
-
       opts = {type: 'credit'}
       add_money! opts, money, currency: options[:originator].payment.currency
-      add_credit_card! opts, options[:originator].payment.source
+      opts[:transactionid] = reference
 
-      res = ::AlphaCard.request opts, account
-
-      logger.debug "-"*1024
-
-      ActiveMerchant::Billing::Response.new res.success?, "AlphaCardGateway#credit: #{res.text}", res.data, response_params(res)
+      request opts, 'credit'
     end
 
 
@@ -116,6 +92,15 @@ module Spree
       exp = "%02d%02d" % [month, year]
 
       opts.merge!  ccnumber: cc.number, ccexp: exp
+    end
+
+    def request opts, originator
+      begin
+        res = provider.request opts, account
+        ActiveMerchant::Billing::Response.new res.success?, "AlphaCardGateway##{originator}: #{res.text}", res.data, response_params(res)
+      rescue ::AlphaCard::AlphaCardError => e
+        ActiveMerchant::Billing::Response.new false, "AlphaCardGateway##{originator}: #{e.message}", e.response.data
+      end
     end
 
     def response_params result
