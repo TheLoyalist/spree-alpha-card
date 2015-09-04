@@ -129,7 +129,7 @@ RSpec.describe Spree::Gateway::AlphaCardGateway do
 
     end
 
-    context '#credit' do
+    context '#void' do
 
       it 'fails to void since implementation is missing' do
         response = provider.void
