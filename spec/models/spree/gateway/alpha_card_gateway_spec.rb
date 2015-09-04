@@ -69,6 +69,10 @@ RSpec.describe Spree::Gateway::AlphaCardGateway do
         }
       end
 
+      before :each do
+        allow(Spree::Order).to receive(:find_by!).and_return nil
+      end
+
       it 'purchases successfully' do
         response = VCR.use_cassette("simple purchase") do
           provider.purchase 256_67, cc, opts

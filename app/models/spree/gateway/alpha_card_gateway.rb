@@ -2,7 +2,7 @@
 # Alpha Card Payment Gateway
 #
 #
-# TODO include billing and shipping address fields
+# TODO include shipping address fields
 #
 # cvv: not provided by Spree?
 #
@@ -53,6 +53,7 @@ module Spree
       }
       add_money! opts, money, options
       add_credit_card! opts, credit_card
+      add_bill_address! opts
 
       request opts, 'purchase'
     end
@@ -97,12 +98,34 @@ module Spree
       opts.merge!  ccnumber: cc.number, ccexp: exp
     end
 
+    def add_bill_address! opts
+      order_number, _ = opts[:orderid].split('-')
+      order = Spree::Order.find_by number: order_number
+
+      if order
+        address = order.bill_address
+        opts.merge!(
+          firstname: address.firstname,
+          lastname:  address.lastname,
+          address1:  address.address1,
+          address2:  address.address2,
+          city:      address.city,
+          state:     address.state.abbr,
+          zip:       address.zipcode,
+          country:   address.country.iso,
+          phone:     address.phone,
+        )
+      end
+    end
+
     def request opts, originator
       begin
         res = provider.request opts, account
         ActiveMerchant::Billing::Response.new res.success?, "AlphaCardGateway##{originator}: #{res.text}", res.data, response_params(res.data)
       rescue ::AlphaCard::AlphaCardError => e
-        ActiveMerchant::Billing::Response.new false, "AlphaCardGateway##{originator}: #{e.message}", e.response.data, response_params(e.response.data)
+        options = response_params(e.response.data)
+        message = "Alpha Card: #{e.message} #{options[:avs_result].try(:message)}".strip
+        ActiveMerchant::Billing::Response.new false, message, e.response.data, options
       end
     end
 
@@ -110,9 +133,12 @@ module Spree
       options = {
         test: test?,
         authorization: data['authcode'].presence,
-        avs_result: data['avsresponse'].presence,
         cvv_result: data['cvvresponse'].presence,
       }
+
+      if data['avsresponse'].present?
+        options[:avs_result] = ActiveMerchant::Billing::AVSResult.new code: data['avsresponse']
+      end
 
       unless data['response_code'] == '100'
         options[:error_code] = data['response_code']
