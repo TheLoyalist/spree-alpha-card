@@ -1,3 +1,4 @@
+require 'bundler/gem_tasks'
 require 'spree/testing_support/common_rake'
 
 task :default => [:spec]
