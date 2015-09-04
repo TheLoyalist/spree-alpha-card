@@ -189,10 +189,6 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
-    rspec-activemodel-mocks (1.0.1)
-      activemodel (>= 3.0)
-      activesupport (>= 3.0)
-      rspec-mocks (>= 2.99, < 4.0)
     rspec-core (3.2.3)
       rspec-support (~> 3.2.0)
     rspec-expectations (3.2.1)
@@ -293,7 +289,7 @@ DEPENDENCIES
   factory_girl
   pg
   rake
-  rspec-activemodel-mocks
+  rspec-mocks
   rspec-rails
   sass-rails (~> 4.0.2)
   spree-alpha-card!
@@ -302,4 +298,4 @@ DEPENDENCIES
   webmock
 
 BUNDLED WITH
-   1.10.2
+   1.10.6

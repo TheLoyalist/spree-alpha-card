@@ -9,7 +9,6 @@ end
 
 require 'rspec/rails'
 require 'ffaker'
-require 'rspec/active_model/mocks'
 require 'vcr'
 require 'webmock'
 
