@@ -53,9 +53,16 @@ RSpec.describe Spree::Gateway::AlphaCardGateway do
 
   context 'api calls' do
 
-    before :each do
-      provider.set_preference :login, "demo"
-      provider.set_preference :password, "password"
+    context 'credentials' do
+      it 'checks the default credentials' do
+        expect(provider.preferred_login).to eq 'demo'
+        expect(provider.preferred_password).to eq 'password'
+      end
+
+      it 'checks you can set the login preference' do
+        provider.set_preference :login, 'user'
+        expect(provider.preferred_login).to eq 'user'
+      end
     end
 
     context '#purchase' do

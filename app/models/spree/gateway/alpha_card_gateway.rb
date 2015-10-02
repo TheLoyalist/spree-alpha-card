@@ -9,9 +9,8 @@
 module Spree
   class Gateway::AlphaCardGateway < Gateway
 
-    preference :login, :string
-    preference :password, :string
-
+    preference :login, :string, default: 'demo'
+    preference :password, :string, default: 'password'
 
 
     def provider_class
@@ -154,4 +153,3 @@ module Spree
 
   end
 end
-
