@@ -37,11 +37,13 @@ module Spree
       %w(purchase credit)
     end
 
-    def void(*args)
-      ActiveMerchant::Billing::Response.new false, "AlphaCardGateway#void not implemented, please use refund", {}, {}
+    def void transaction_id, options = {}
+      opts = {
+        type: 'void',
+        transactionid: transaction_id
+      }
+      request opts, 'void'
     end
-
-
 
     def purchase money, credit_card, options = {}
       opts = {
