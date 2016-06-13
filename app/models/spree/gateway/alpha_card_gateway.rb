@@ -59,14 +59,18 @@ module Spree
       request opts, 'purchase'
     end
 
+    def refund money, reference, options = {}
+      opts = {
+        type: 'refund',
+        transactionid: reference
+      }
+      add_money! opts, money, options
 
+      request opts, 'refund'
+    end
 
     def credit money, reference, options = {}
-      opts = {type: 'credit'}
-      add_money! opts, money, currency: options[:originator].payment.currency
-      opts[:transactionid] = reference
-
-      request opts, 'credit'
+      refund money, reference, options
     end
 
 

@@ -169,6 +169,34 @@ RSpec.describe Spree::Gateway::AlphaCardGateway do
 
     end
 
+    context '#refund' do
+      let(:opts) do
+        {
+          email: "l@larskluge.com",
+          order_id: "12345678",
+          ipaddress: "::1",
+          currency: "USD",
+        }
+      end
+
+      before(:each) do
+        allow(Spree::Order).to receive(:find_by!).and_return nil
+      end
+
+      it 'refunds the transaction successfully' do
+        response = VCR.use_cassette("simple refund") do
+          transactionid = provider.purchase(256_67, cc, opts).params["transactionid"]
+          provider.refund 256_67, transactionid, opts
+        end
+
+        expect(response).to be_an_instance_of(::ActiveMerchant::Billing::Response)
+        expect(response).to be_success
+        expect(response.params).to include("type" => "refund")
+        expect(response.error_code).to be_nil
+      end
+
+    end
+
   end
 
 end
