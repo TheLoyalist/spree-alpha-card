@@ -137,7 +137,7 @@ module Spree
     def response_params data
       options = {
         test: test?,
-        authorization: data['authcode'].presence,
+        authorization: data['transactionid'].presence,
         cvv_result: data['cvvresponse'].presence,
       }
 

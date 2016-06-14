@@ -88,7 +88,6 @@ RSpec.describe Spree::Gateway::AlphaCardGateway do
         expect(response).to be_an_instance_of(::ActiveMerchant::Billing::Response)
         expect(response).to be_success
         expect(response.params).to include("type" => "sale")
-        expect(response.authorization).to eq("123456")
         expect(response.error_code).to be_nil
       end
 
@@ -99,7 +98,6 @@ RSpec.describe Spree::Gateway::AlphaCardGateway do
 
         expect(response).to be_an_instance_of(::ActiveMerchant::Billing::Response)
         expect(response).to_not be_success
-        expect(response.authorization).to be_nil
         expect(response.message).to match(/declined/i)
         expect(response.error_code).to eq("200")
       end
@@ -163,7 +161,6 @@ RSpec.describe Spree::Gateway::AlphaCardGateway do
         expect(response).to be_an_instance_of(::ActiveMerchant::Billing::Response)
         expect(response).to be_success
         expect(response.params).to include("type" => "void")
-        expect(response.authorization).to eq("123456")
         expect(response.error_code).to be_nil
       end
 
