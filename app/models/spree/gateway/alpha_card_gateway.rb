@@ -73,7 +73,9 @@ module Spree
       refund money, reference, options
     end
 
-
+    def cancel reference
+      void reference
+    end
 
     protected
 
