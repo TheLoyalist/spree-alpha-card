@@ -1,0 +1,73 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://secure.alphacardgateway.com/api/transact.php
+    body:
+      encoding: US-ASCII
+      string: type=sale&email=monserrat.howell%40binsdaniel.biz&orderid=R469909421-P800VDWM&ipaddress=&amount=5.00&currency=USD&tax=0.00&shipping=0.00&ccnumber=4111111111111111&ccexp=1217&firstname=John&lastname=Doe&address1=10%20Lovely%20Street&address2=Northwest&city=Herndon&state=AL&zip=35005&country=US&phone=555-555-0199&username=demo&password=password
+    headers:
+      Accept:
+      - "*/*; q=0.5, application/xml"
+      Accept-Encoding:
+      - gzip, deflate
+      Content-Length:
+      - '344'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 16 Jun 2016 07:13:47 GMT
+      Server:
+      - Apache
+      Content-Length:
+      - '155'
+      Content-Type:
+      - text/html; charset=UTF-8
+    body:
+      encoding: UTF-8
+      string: response=1&responsetext=SUCCESS&authcode=123456&transactionid=3155305412&avsresponse=N&cvvresponse=&orderid=R469909421-P800VDWM&type=sale&response_code=100
+    http_version: 
+  recorded_at: Thu, 16 Jun 2016 07:13:50 GMT
+- request:
+    method: post
+    uri: https://secure.alphacardgateway.com/api/transact.php
+    body:
+      encoding: US-ASCII
+      string: type=refund&transactionid=3155305412&amount=5.00&currency=&username=demo&password=password
+    headers:
+      Accept:
+      - "*/*; q=0.5, application/xml"
+      Accept-Encoding:
+      - gzip, deflate
+      Content-Length:
+      - '90'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 16 Jun 2016 07:13:51 GMT
+      Server:
+      - Apache
+      Content-Length:
+      - '150'
+      Content-Type:
+      - text/html; charset=UTF-8
+    body:
+      encoding: UTF-8
+      string: response=1&responsetext=SUCCESS&authcode=&transactionid=3155305466&avsresponse=&cvvresponse=&orderid=R469909421-P800VDWM&type=refund&response_code=100
+    http_version: 
+  recorded_at: Thu, 16 Jun 2016 07:13:52 GMT
+recorded_with: VCR 2.9.3
