@@ -37,11 +37,13 @@ module Spree
       %w(purchase credit)
     end
 
-    def void(*args)
-      ActiveMerchant::Billing::Response.new false, "AlphaCardGateway#void not implemented, please use refund", {}, {}
+    def void transaction_id, options = {}
+      opts = {
+        type: 'void',
+        transactionid: transaction_id
+      }
+      request opts, 'void'
     end
-
-
 
     def purchase money, credit_card, options = {}
       opts = {
@@ -57,17 +59,23 @@ module Spree
       request opts, 'purchase'
     end
 
+    def refund money, reference, options = {}
+      opts = {
+        type: 'refund',
+        transactionid: reference
+      }
+      add_money! opts, money, options
 
-
-    def credit money, reference, options = {}
-      opts = {type: 'credit'}
-      add_money! opts, money, currency: options[:originator].payment.currency
-      opts[:transactionid] = reference
-
-      request opts, 'credit'
+      request opts, 'refund'
     end
 
+    def credit money, reference, options = {}
+      refund money, reference, options
+    end
 
+    def cancel reference
+      void reference
+    end
 
     protected
 
@@ -131,7 +139,7 @@ module Spree
     def response_params data
       options = {
         test: test?,
-        authorization: data['authcode'].presence,
+        authorization: data['transactionid'].presence,
         cvv_result: data['cvvresponse'].presence,
       }
 

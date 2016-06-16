@@ -88,7 +88,6 @@ RSpec.describe Spree::Gateway::AlphaCardGateway do
         expect(response).to be_an_instance_of(::ActiveMerchant::Billing::Response)
         expect(response).to be_success
         expect(response.params).to include("type" => "sale")
-        expect(response.authorization).to eq("123456")
         expect(response.error_code).to be_nil
       end
 
@@ -99,7 +98,6 @@ RSpec.describe Spree::Gateway::AlphaCardGateway do
 
         expect(response).to be_an_instance_of(::ActiveMerchant::Billing::Response)
         expect(response).to_not be_success
-        expect(response.authorization).to be_nil
         expect(response.message).to match(/declined/i)
         expect(response.error_code).to eq("200")
       end
@@ -141,12 +139,57 @@ RSpec.describe Spree::Gateway::AlphaCardGateway do
     end
 
     context '#void' do
+      let(:opts) do
+        {
+          email: "l@larskluge.com",
+          order_id: "12345678",
+          ipaddress: "::1",
+          currency: "USD",
+        }
+      end
 
-      it 'fails to void since implementation is missing' do
-        response = provider.void
+      before(:each) do
+        allow(Spree::Order).to receive(:find_by!).and_return nil
+      end
+
+      it 'voids the transaction successfully' do
+        response = VCR.use_cassette("simple void") do
+          transactionid = provider.purchase(256_67, cc, opts).params["transactionid"]
+          provider.void transactionid
+        end
+
         expect(response).to be_an_instance_of(::ActiveMerchant::Billing::Response)
-        expect(response).to_not be_success
-        expect(response.message).to match(/not implemented/i)
+        expect(response).to be_success
+        expect(response.params).to include("type" => "void")
+        expect(response.error_code).to be_nil
+      end
+
+    end
+
+    context '#refund' do
+      let(:opts) do
+        {
+          email: "l@larskluge.com",
+          order_id: "12345678",
+          ipaddress: "::1",
+          currency: "USD",
+        }
+      end
+
+      before(:each) do
+        allow(Spree::Order).to receive(:find_by!).and_return nil
+      end
+
+      it 'refunds the transaction successfully' do
+        response = VCR.use_cassette("simple refund") do
+          transactionid = provider.purchase(256_67, cc, opts).params["transactionid"]
+          provider.refund 256_67, transactionid, opts
+        end
+
+        expect(response).to be_an_instance_of(::ActiveMerchant::Billing::Response)
+        expect(response).to be_success
+        expect(response.params).to include("type" => "refund")
+        expect(response.error_code).to be_nil
       end
 
     end

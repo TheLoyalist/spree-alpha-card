@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'vcr'
   spec.add_development_dependency 'webmock'
 
-  spec.add_runtime_dependency 'alpha_card', '~> 0.2.5'
+  spec.add_runtime_dependency 'alpha_card', '= 0.2.5'
   spec.add_runtime_dependency 'spree_core', '>= 3.0.0'
 end
 
