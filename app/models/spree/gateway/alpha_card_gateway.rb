@@ -117,9 +117,9 @@ module Spree
           address1:  address.address1,
           address2:  address.address2,
           city:      address.city,
-          state:     address.state.abbr,
+          state:     address.state_text,
           zip:       address.zipcode,
-          country:   address.country.iso,
+          country:   address.country.try(:iso),
           phone:     address.phone,
         )
       end
