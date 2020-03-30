@@ -102,7 +102,11 @@ module Spree
       year = cc.year.to_i - 2000
       exp = "%02d%02d" % [month, year]
 
-      opts.merge!  ccnumber: cc.number, ccexp: exp
+      opts.merge!({
+        ccnumber: cc.number,
+        ccexp: exp,
+        cvv: cc.verification_value,
+      })
     end
 
     def add_bill_address! opts
